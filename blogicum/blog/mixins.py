@@ -49,7 +49,7 @@ class PostAuthorRequredMixin(LoginRequiredMixin):
         if self.get_object().author != request.user:
             return redirect(
                 'blog:post_detail',
-                pk=kwargs[self.pk_url_kwarg])
+                post_id=kwargs['post_id'])
         return super().dispatch(request, *args, **kwargs)
 
 
