@@ -1,7 +1,9 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.urls import reverse
+
 from core.models import IspublishedInfoModel, PubDateInfoModel
+
 
 CATEGORY_TITLE_MAX_LENGTH = 256
 LOCATION_NAME_MAX_LENGTH = 256
@@ -26,7 +28,7 @@ class Category(IspublishedInfoModel, PubDateInfoModel):
         verbose_name_plural = 'Категории'
 
     def __str__(self):
-        return self.title
+        return self.title[:10]
 
 
 class Location(IspublishedInfoModel, PubDateInfoModel):
@@ -38,12 +40,10 @@ class Location(IspublishedInfoModel, PubDateInfoModel):
         verbose_name_plural = 'Местоположения'
 
     def __str__(self):
-        return self.name
+        return self.name[:10]
 
 
 class Post(IspublishedInfoModel, PubDateInfoModel):
-    POST_RELATED_NAME = 'posts'
-
     pub_date_help_text = ('Если установить дату и время в будущем '
                           '— можно делать отложенные публикации.')
 
@@ -54,18 +54,15 @@ class Post(IspublishedInfoModel, PubDateInfoModel):
 
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
-                               related_name=POST_RELATED_NAME,
                                verbose_name='Автор публикации')
     category = models.ForeignKey('Category',
                                  on_delete=models.SET_NULL,
                                  null=True,
-                                 related_name=POST_RELATED_NAME,
                                  verbose_name='Категория')
     location = models.ForeignKey('Location',
                                  on_delete=models.SET_NULL,
                                  null=True,
                                  blank=False,
-                                 related_name=POST_RELATED_NAME,
                                  verbose_name='Местоположение')
     image = models.ImageField('Изображение',
                               upload_to='post_image',
@@ -74,31 +71,41 @@ class Post(IspublishedInfoModel, PubDateInfoModel):
     class Meta:
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
-        ordering = ('-pub_date',)
+        default_related_name = 'posts'
 
-    def get_absolute_url(self):
-        return reverse('blog:post_detail', kwargs={'pk': self.id})
+        ordering = ('-pub_date',)
 
     @property
     def comment_count(self):
         return self.comments.count()
 
+    def get_absolute_url(self):
+        return reverse('blog:post_detail', kwargs={'post_id': self.id})
+
+    def __str__(self):
+        return self.title[:12]
+
 
 class Comment(PubDateInfoModel):
-    COMMENT_RELATED_NAME = 'comments'
     text = models.TextField('Текст')
 
     post = models.ForeignKey(Post,
                              on_delete=models.CASCADE,
-                             related_name=COMMENT_RELATED_NAME,
                              verbose_name='Комментарий Публикации')
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
-                               related_name=COMMENT_RELATED_NAME,
                                verbose_name='Автор Комментария')
 
     class Meta:
+        verbose_name = 'комментарий'
+        verbose_name_plural = 'Комментарии'
+
+        default_related_name = 'comments'
+
         ordering = ('created_at',)
 
     def get_absolute_url(self):
-        return reverse('blog:post_detail', kwargs={'pk': self.post.id})
+        return reverse('blog:post_detail', kwargs={'post_id': self.post.id})
+
+    def __str__(self):
+        return f'{self.post.id} - {self.text}'[:15]

@@ -1,7 +1,8 @@
-from django.forms import ModelForm, DateTimeInput
 from django.contrib.auth import get_user_model
+from django.forms import ModelForm, DateTimeInput
 
 from .models import Post, Comment
+
 
 User = get_user_model()
 
@@ -9,9 +10,7 @@ User = get_user_model()
 class PostForm(ModelForm):
     class Meta:
         model = Post
-        fields = [
-            'title', 'text', 'pub_date',
-            'category', 'location', 'image']
+        exclude = ['created_at', 'is_published', 'author']
         widgets = {
             'pub_date': DateTimeInput(
                 format='%Y-%m-%dT%H:%M:%S',
