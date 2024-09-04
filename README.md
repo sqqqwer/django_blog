@@ -7,40 +7,40 @@
 ## Установка
 1. Клонирование репозитория
    
-```console
+```bash
 $ git clone https://github.com/sqqqwer/django_sprint4.git
 ```
 
 2. Переход в директорию проекта
 
-```console
+```bash
 $ cd django_sprint4
 ```
 
 3. Создание виртуального окружения
 
-```console
+```bash
 $ python -m venv venv
 ```
 
 4. Активация виртуального окружения
 
-```console
+```bash
 $ . venv/Scripts/activate
 ```
 
 5. Установка зависимостей
 
-```console
+```bash
 $ pip install -r requirements.txt
 ```
 
 6. Локальный запуск проекта
 
-```console
+```bash
 $ cd blogicum/
 ```
 
-```console
+```bash
 $ python manage.py runsrever
 ```
