@@ -1,9 +1,8 @@
-from django.utils import timezone
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView
 from django.urls import reverse
+from django.utils import timezone
 
 from .models import Post
 
