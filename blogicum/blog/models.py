@@ -6,8 +6,15 @@ from core.models import IspublishedInfoModel, PubDateInfoModel
 
 
 CATEGORY_TITLE_MAX_LENGTH = 256
+CATEGORY_STR_OUTPUT_LIMIT = 10
+
 LOCATION_NAME_MAX_LENGTH = 256
+LOCATION_STR_OUTPUT_LIMIT = 10
+
 POST_TITLE_MAX_LENGTH = 256
+POST_STR_OUTPUT_LIMIT = 10
+
+COMMENT_STR_OUTPUT_LIMIT = 15
 
 User = get_user_model()
 
@@ -28,7 +35,7 @@ class Category(IspublishedInfoModel, PubDateInfoModel):
         verbose_name_plural = 'Категории'
 
     def __str__(self):
-        return self.title[:10]
+        return self.title[:CATEGORY_STR_OUTPUT_LIMIT]
 
 
 class Location(IspublishedInfoModel, PubDateInfoModel):
@@ -40,7 +47,7 @@ class Location(IspublishedInfoModel, PubDateInfoModel):
         verbose_name_plural = 'Местоположения'
 
     def __str__(self):
-        return self.name[:10]
+        return self.name[:LOCATION_STR_OUTPUT_LIMIT]
 
 
 class Post(IspublishedInfoModel, PubDateInfoModel):
@@ -83,7 +90,7 @@ class Post(IspublishedInfoModel, PubDateInfoModel):
         return reverse('blog:post_detail', kwargs={'post_id': self.id})
 
     def __str__(self):
-        return self.title[:12]
+        return self.title[:POST_STR_OUTPUT_LIMIT]
 
 
 class Comment(PubDateInfoModel):
@@ -108,4 +115,4 @@ class Comment(PubDateInfoModel):
         return reverse('blog:post_detail', kwargs={'post_id': self.post.id})
 
     def __str__(self):
-        return f'{self.post.id} - {self.text}'[:15]
+        return f'{self.post.id} - {self.text}'[:COMMENT_STR_OUTPUT_LIMIT]

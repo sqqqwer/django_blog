@@ -28,15 +28,14 @@ class PostDetailView(mixins.ValidPostQueryMixin, DetailView):
     pk_url_kwarg = 'post_id'
 
     def get_object(self, queryset=None):
-        queryset = self.get_queryset()
-        try:
+        queryset = self.queryset
+
+        post = get_object_or_404(queryset,
+                                 pk=self.kwargs.get(self.pk_url_kwarg))
+        if post.author != self.request.user:
+            queryset = self.get_queryset()
             post = get_object_or_404(queryset,
                                      pk=self.kwargs.get(self.pk_url_kwarg))
-        except Http404:
-            queryset = mixins.ValidPostQueryMixin.__bases__[0].queryset
-            post = get_object_or_404(queryset,
-                                     pk=self.kwargs.get(self.pk_url_kwarg),
-                                     author=self.request.user)
         return post
 
     def get_context_data(self, **kwargs):

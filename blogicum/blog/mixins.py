@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
@@ -32,7 +32,7 @@ class ValidPostQueryMixin(PostQueryMixin):
     @classmethod
     def valid_filters(cls, queryset):
         queryset = queryset.filter(
-            pub_date__lte=datetime.now(),
+            pub_date__lte=timezone.now(),
             is_published=True,
             category__is_published=True,
         )

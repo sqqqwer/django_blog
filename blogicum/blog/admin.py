@@ -1,32 +1,31 @@
-from datetime import datetime
+from django.utils import timezone
 
 from django.contrib import admin
 from django.db.models import Q
-from django.utils.translation import gettext_lazy as _
 
 from .models import Category, Location, Post, Comment
 
 
 class PostPublishedListFilter(admin.SimpleListFilter):
-    title = _('Опубликовано')
+    title = ('Опубликовано')
     parameter_name = 'is_published'
 
     def lookups(self, request, model_admin):
         return [
-            ('published', _('Опубликовано')),
-            ('not_published', _('Не опубликовано'))
+            ('published', ('Опубликовано')),
+            ('not_published', ('Не опубликовано'))
         ]
 
     def queryset(self, request, queryset):
         if self.value() == 'published':
             return queryset.filter(
-                pub_date__lte=datetime.now(),
+                pub_date__lte=timezone.now(),
                 is_published=True,
                 category__is_published=True,
             )
         if self.value() == 'not_published':
             return queryset.filter(
-                Q(pub_date__gte=datetime.now())
+                Q(pub_date__gte=timezone.now())
                 | Q(is_published=False)
                 | Q(category__is_published=False)
             )
@@ -50,15 +49,15 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = [PostPublishedListFilter]
     search_fields = ['pk', 'title']
 
-    @admin.display(boolean=True)
+    @admin.display(boolean=True, description='Опубликовано')
     def post_published(self, obj):
         scheduled = self.is_scheduled(obj)
         published = obj.category.is_published and obj.is_published
         return published and scheduled
 
-    @admin.display(boolean=True)
+    @admin.display(boolean=True, description='Запланированно')
     def is_scheduled(self, obj):
-        return obj.pub_date.timetuple() <= datetime.now().timetuple()
+        return obj.pub_date <= timezone.now()
 
 
 @admin.register(Comment)
